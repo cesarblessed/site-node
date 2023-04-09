@@ -4,6 +4,7 @@ const { engine } = require('express-handlebars');
 const bodyParser = require('body-parser');
 const app = express();
 const admin = require('./routes/admin');
+const path = require("path");
 // const mongoose = require('mongoose');
 // Configuração
     // Body Parser
@@ -14,7 +15,19 @@ const admin = require('./routes/admin');
     app.set('view engine', 'handlebars');
     // Mongoose
     
+    // Public
+        app.use(express.static(path.join(__dirname,"public")));
 // Rotas
+
+    app.get('/', (req, res) => {
+        res.send('Rota principal');
+    })
+
+    
+    app.get('/posts', (req, res) => {
+        res.send('Lista Posts');
+    })
+
     app.use('/admin', admin);
 // Outros
 const PORT = 6032;
