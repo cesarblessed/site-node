@@ -103,9 +103,21 @@ router.post("/categorias/deletar", (req, res) => {
     });
 });
 
-router.get("/postagens", (req, res) => {
-    res.render("admin/postagens");
-});
+router.get('/postagens', (req, res) => {
+    
+    Postagem.find().lean().populate('categoria').sort({data: 'desc'}).then((postagens) => {
+
+        res.render('admin/postagens', {postagens: postagens})
+
+    }).catch( (err) => {
+
+        req.flash('error_msg', 'Erro ao listar os posts')
+        res.render('/admin')
+
+    })
+    
+
+})
 
 router.get("/postagens/add", (req, res) => {
     Categoria.find().lean().then((categorias) => {
@@ -119,6 +131,23 @@ router.get("/postagens/add", (req, res) => {
 
 router.post("/postagens/nova", (req, res) => {
     var erros = []
+
+    if(!req.body.titulo || typeof titulo == undefined || titulo == null) {
+        erros.push({texto: 'Titulo inválido'})
+    }
+    if(!req.body.slug || typeof slug == undefined || slug == null) {
+        erros.push({texto: 'Slug inválido'})
+    }
+    if(!req.body.descricao || typeof descricao == undefined || descricao == null) {
+        erros.push({texto: 'Descrição inválido'})
+    }
+    if(!req.body.conteudo || typeof conteudo == undefined || conteudo == null) {
+        erros.push({texto: 'Conteudo inválido'})
+    }
+    if(!req.body.categoria || typeof categoria == undefined || categoria == null) {
+        erros.push({texto: 'Conteudo inválido'})
+    }
+      
 
     if(req.body.categoria == "0"){
         erros.push({texto: "Não possui categoria cadastrada!"});
